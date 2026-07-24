@@ -2,37 +2,22 @@ import { useEffect, useState } from "react";
 import "./Players.css";
 
 import {
-  collection,
-  addDoc,
-  getDocs,
-  deleteDoc,
-  doc,
-  query,
-  where,
-} from "firebase/firestore";
-
-import { db } from "../firebase";
+  getPlayers,
+  addPlayer,
+  updatePlayer,
+  deletePlayer,
+} from "../services/playerService";
 
 function Players({ setPage, user }) {
   const [playerName, setPlayerName] = useState("");
   const [players, setPlayers] = useState([]);
+  const [editingPlayerId, setEditingPlayerId] = useState(null);
 
   const loadPlayers = async () => {
     if (!user) return;
 
-    const q = query(
-      collection(db, "players"),
-      where("ownerId", "==", user.uid)
-    );
-
-    const snapshot = await getDocs(q);
-
-    const loadedPlayers = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-
-    setPlayers(loadedPlayers);
+    const data = await getPlayers(user.uid);
+    setPlayers(data);
   };
 
   useEffect(() => {
@@ -41,26 +26,35 @@ function Players({ setPage, user }) {
     }
   }, [user]);
 
-  const addPlayer = async () => {
+  const savePlayer = async () => {
     if (playerName.trim() === "") return;
 
-    await addDoc(collection(db, "players"), {
-      name: playerName.trim(),
-      ownerId: user.uid,
-      wins: 0,
-      losses: 0,
-      matches: 0,
-      elo: 1000,
-      createdAt: new Date(),
-    });
+    if (editingPlayerId) {
+      await updatePlayer(editingPlayerId, playerName.trim());
+    } else {
+      await addPlayer(user.uid, playerName.trim());
+    }
 
     setPlayerName("");
-    loadPlayers();
+    setEditingPlayerId(null);
+
+    await loadPlayers();
   };
 
-  const deletePlayer = async (id) => {
-    await deleteDoc(doc(db, "players", id));
-    loadPlayers();
+  const startEditing = (player) => {
+    setPlayerName(player.name);
+    setEditingPlayerId(player.id);
+  };
+
+  const removePlayer = async (playerId) => {
+    await deletePlayer(playerId);
+
+    if (editingPlayerId === playerId) {
+      setEditingPlayerId(null);
+      setPlayerName("");
+    }
+
+    await loadPlayers();
   };
 
   return (
@@ -75,8 +69,11 @@ function Players({ setPage, user }) {
         onChange={(e) => setPlayerName(e.target.value)}
       />
 
-      <button className="add-button" onClick={addPlayer}>
-        ➕ Add Player
+      <button
+        className="add-button"
+        onClick={savePlayer}
+      >
+        {editingPlayerId ? "💾 Update Player" : "➕ Add Player"}
       </button>
 
       {players.length === 0 ? (
@@ -86,13 +83,18 @@ function Players({ setPage, user }) {
           <h3>Players</h3>
 
           {players.map((player) => (
-            <div key={player.id} className="player-card">
+            <div
+              key={player.id}
+              className="player-card"
+            >
               <span>{player.name}</span>
 
               <div className="player-actions">
-                <button>✏️</button>
+                <button onClick={() => startEditing(player)}>
+                  ✏️
+                </button>
 
-                <button onClick={() => deletePlayer(player.id)}>
+                <button onClick={() => removePlayer(player.id)}>
                   🗑️
                 </button>
               </div>
