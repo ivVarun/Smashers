@@ -1,0 +1,102 @@
+/* ===== Global ===== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0f172a;
+  color: #f8fafc;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* ===== App ===== */
+
+.app {
+  max-width: 1100px;
+  margin: auto;
+  padding: 40px 20px;
+}
+
+.app-title {
+  text-align: center;
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.welcome-text {
+  text-align: center;
+  color: #cbd5e1;
+  margin-bottom: 40px;
+  font-size: 18px;
+}
+
+/* ===== Dashboard ===== */
+
+.dashboard-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.dashboard-button {
+  background: #1e293b;
+  color: white;
+  border: none;
+  border-radius: 16px;
+  padding: 24px;
+  font-size: 20px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.dashboard-button:hover:not(:disabled) {
+  background: #2563eb;
+  transform: translateY(-3px);
+}
+
+.dashboard-button:disabled {
+  background: #334155;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* ===== Buttons ===== */
+
+.primary-button,
+.secondary-button {
+  width: 100%;
+  max-width: 350px;
+  display: block;
+  margin: 20px auto;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.primary-button {
+  background: #2563eb;
+  color: white;
+}
+
+.primary-button:hover {
+  background: #1d4ed8;
+}
+
+.secondary-button {
+  background: #475569;
+  color: white;
+}
+
+.secondary-button:hover {
+  background: #64748b;
+}

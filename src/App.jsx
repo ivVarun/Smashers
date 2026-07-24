@@ -1,18 +1,31 @@
-import "./App.css";
 import { useEffect, useState } from "react";
 import {
   signInWithPopup,
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
-
 import { auth, provider } from "./firebase";
+
+import "./styles/app.css";
+
 import Players from "./components/Players";
+import NewMatch from "./components/NewMatch";
+import TeamSelection from "./components/TeamSelection";
+import ScoreEntry from "./components/ScoreEntry";
+import MatchHistory from "./components/MatchHistory";
 
 function App() {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState("dashboard");
+  const [loading, setLoading] = useState(true);
+
+  const [currentMatch, setCurrentMatch] = useState({
+    selectedPlayers: [],
+    teamA: [],
+    teamB: [],
+    teamAScore: "",
+    teamBScore: "",
+  });
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -23,147 +36,164 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  const login = async () => {
+  const handleLogin = async () => {
     try {
       await signInWithPopup(auth, provider);
-    } catch (err) {
-      console.error(err);
-      alert(err.message);
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  const logout = async () => {
+  const handleLogout = async () => {
     await signOut(auth);
+
     setPage("dashboard");
+
+    setCurrentMatch({
+      selectedPlayers: [],
+      teamA: [],
+      teamB: [],
+      teamAScore: "",
+      teamBScore: "",
+    });
   };
 
   if (loading) {
+    return <h2>Loading...</h2>;
+  }
+
+  if (!user) {
     return (
-      <div
-        style={{
-          background: "#0f172a",
-          color: "white",
-          minHeight: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          fontSize: "24px",
-        }}
-      >
-        Loading...
+      <div className="app">
+        <h1 className="app-title">🏸 Smashers</h1>
+
+        <button
+          className="primary-button"
+          onClick={handleLogin}
+        >
+          Sign in with Google
+        </button>
       </div>
     );
   }
 
-  return (
-    <div
-      style={{
-        background: "#0f172a",
-        minHeight: "100vh",
-        color: "white",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-        fontFamily: "Arial",
-      }}
-    >
-      <h1>🏸 Smashers</h1>
+  if (page === "players") {
+    return (
+      <Players
+        setPage={setPage}
+        user={user}
+      />
+    );
+  }
 
-      {!user ? (
+  if (page === "newMatch") {
+    return (
+      <NewMatch
+        setPage={setPage}
+        user={user}
+        currentMatch={currentMatch}
+        setCurrentMatch={setCurrentMatch}
+      />
+    );
+  }
+
+  if (page === "teamSelection") {
+    return (
+      <TeamSelection
+        setPage={setPage}
+        currentMatch={currentMatch}
+        setCurrentMatch={setCurrentMatch}
+      />
+    );
+  }
+
+  if (page === "scoreEntry") {
+    return (
+      <ScoreEntry
+        setPage={setPage}
+        user={user}
+        currentMatch={currentMatch}
+        setCurrentMatch={setCurrentMatch}
+      />
+    );
+  }
+
+  if (page === "matchHistory") {
+    return (
+      <MatchHistory
+        setPage={setPage}
+        user={user}
+      />
+    );
+  }
+
+  return (
+    <div className="app">
+      <h1 className="app-title">
+        🏸 Smashers
+      </h1>
+
+      <p className="welcome-text">
+        Welcome back, {user.displayName} 👋
+      </p>
+
+      <div className="dashboard-buttons">
+
         <button
-          onClick={login}
-          style={{
-            padding: "12px 24px",
-            borderRadius: "8px",
-            border: "none",
-            background: "#2563eb",
-            color: "white",
-            fontSize: "16px",
-            cursor: "pointer",
+          className="dashboard-button"
+          onClick={() => setPage("players")}
+        >
+          👥 Players
+        </button>
+
+        <button
+          className="dashboard-button"
+          onClick={() => {
+            setCurrentMatch({
+              selectedPlayers: [],
+              teamA: [],
+              teamB: [],
+              teamAScore: "",
+              teamBScore: "",
+            });
+
+            setPage("newMatch");
           }}
         >
-          Sign in with Google
+          🏸 New Match
         </button>
-      ) : (
-        <>
-          <h2>Welcome, {user.displayName}</h2>
 
-          {page === "dashboard" && (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "15px",
-                marginTop: "30px",
-                width: "250px",
-              }}
-            >
-              <button
-                onClick={() => setPage("players")}
-                style={{
-                  padding: "12px",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                }}
-              >
-                👤 Players
-              </button>
+        <button
+          className="dashboard-button"
+          onClick={() => setPage("matchHistory")}
+        >
+          📜 Match History
+        </button>
 
-              <button
-                style={{
-                  padding: "12px",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                }}
-              >
-                🏸 New Match
-              </button>
+        <button
+          className="dashboard-button"
+          disabled
+        >
+          🏆 Rankings
+        </button>
 
-              <button
-                style={{
-                  padding: "12px",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                }}
-              >
-                📊 Rankings
-              </button>
+        <button
+          className="dashboard-button"
+          disabled
+        >
+          📊 Statistics
+        </button>
 
-              <button
-                style={{
-                  padding: "12px",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                }}
-              >
-                📈 Statistics
-              </button>
+      </div>
 
-              <button
-                onClick={logout}
-                style={{
-                  padding: "12px",
-                  borderRadius: "8px",
-                  background: "#dc2626",
-                  color: "white",
-                  border: "none",
-                  cursor: "pointer",
-                }}
-              >
-                🚪 Logout
-              </button>
-            </div>
-          )}
+      <br />
 
-          {page === "players" && (
-            <Players
-              setPage={setPage}
-              user={user}
-            />
-          )}
-        </>
-      )}
+      <button
+        className="secondary-button"
+        onClick={handleLogout}
+      >
+        Logout
+      </button>
     </div>
   );
 }
