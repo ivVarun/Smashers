@@ -156,7 +156,12 @@ function App() {
             </div>
           )}
 
-          {page === "players" && <Players setPage={setPage} />}
+          {page === "players" && (
+            <Players
+              setPage={setPage}
+              user={user}
+            />
+          )}
         </>
       )}
     </div>

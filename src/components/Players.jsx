@@ -7,20 +7,27 @@ import {
   getDocs,
   deleteDoc,
   doc,
+  query,
+  where,
 } from "firebase/firestore";
 
 import { db } from "../firebase";
 
-function Players({ setPage }) {
+function Players({ setPage, user }) {
   const [playerName, setPlayerName] = useState("");
   const [players, setPlayers] = useState([]);
 
-  const playersCollection = collection(db, "players");
-
   const loadPlayers = async () => {
-    const data = await getDocs(playersCollection);
+    if (!user) return;
 
-    const loadedPlayers = data.docs.map((doc) => ({
+    const q = query(
+      collection(db, "players"),
+      where("ownerId", "==", user.uid)
+    );
+
+    const snapshot = await getDocs(q);
+
+    const loadedPlayers = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
@@ -29,14 +36,17 @@ function Players({ setPage }) {
   };
 
   useEffect(() => {
-    loadPlayers();
-  }, []);
+    if (user) {
+      loadPlayers();
+    }
+  }, [user]);
 
   const addPlayer = async () => {
     if (playerName.trim() === "") return;
 
-    await addDoc(playersCollection, {
+    await addDoc(collection(db, "players"), {
       name: playerName.trim(),
+      ownerId: user.uid,
       wins: 0,
       losses: 0,
       matches: 0,
@@ -45,13 +55,11 @@ function Players({ setPage }) {
     });
 
     setPlayerName("");
-
     loadPlayers();
   };
 
   const deletePlayer = async (id) => {
     await deleteDoc(doc(db, "players", id));
-
     loadPlayers();
   };
 
