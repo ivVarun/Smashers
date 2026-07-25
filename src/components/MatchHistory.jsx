@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "./Players.css";
 import { getMatchHistory } from "../services/matchHistoryService";
 import { getPlayers } from "../services/playerService";
 
@@ -27,64 +28,122 @@ function MatchHistory({ setPage, user }) {
 
   return (
     <div className="players-container">
-      <h2>📜 Match History</h2>
+      <div className="page-header">
+        <h1>📜 Match History</h1>
+        <p>Your previously played badminton matches.</p>
+      </div>
 
       {matches.length === 0 ? (
-        <p>No matches found.</p>
+        <div className="empty-card">
+          <h3>No Matches Yet</h3>
+          <p>Play your first match to see it here.</p>
+        </div>
       ) : (
-        matches.map((match, index) => (
-          <div
-            key={match.id}
-            className="player-card"
-            style={{ marginBottom: "20px" }}
-          >
-            <h3>🏸 Match #{matches.length - index}</h3>
+        <div className="players-list">
+          {matches.map((match, index) => (
+            <div
+              key={match.id}
+              className="player-form-card"
+            >
+              <div className="section-title">
+                <h2>🏸 Match #{matches.length - index}</h2>
 
-            <strong>Team A</strong>
+                <span>
+                  {match.createdAt
+                    ? match.createdAt.toDate().toLocaleDateString()
+                    : ""}
+                </span>
+              </div>
 
-            {match.teamA.map((id) => (
-              <div key={id}>👤 {getPlayerName(id)}</div>
-            ))}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: "30px",
+                  flexWrap: "wrap",
+                }}
+              >
+                <div style={{ flex: 1 }}>
+                  <h3>🔵 Team A</h3>
 
-            <br />
+                  {match.teamA.map((id) => (
+                    <div
+                      key={id}
+                      style={{
+                        padding: "5px 0",
+                        color: "white",
+                      }}
+                    >
+                      👤 {getPlayerName(id)}
+                    </div>
+                  ))}
+                </div>
 
-            <strong>
-              {match.teamAScore} - {match.teamBScore}
-            </strong>
+                <div
+                  style={{
+                    textAlign: "center",
+                    minWidth: "120px",
+                    alignSelf: "center",
+                  }}
+                >
+                  <h1
+                    style={{
+                      color: "#3b82f6",
+                      margin: 0,
+                    }}
+                  >
+                    {match.teamAScore} : {match.teamBScore}
+                  </h1>
 
-            <br />
-            <br />
+                  <p
+                    style={{
+                      color: "#94a3b8",
+                      marginTop: "10px",
+                    }}
+                  >
+                    🏆 Team {match.winner} Won
+                  </p>
+                </div>
 
-            <strong>Team B</strong>
+                <div style={{ flex: 1 }}>
+                  <h3>🟣 Team B</h3>
 
-            {match.teamB.map((id) => (
-              <div key={id}>👤 {getPlayerName(id)}</div>
-            ))}
+                  {match.teamB.map((id) => (
+                    <div
+                      key={id}
+                      style={{
+                        padding: "5px 0",
+                        color: "white",
+                      }}
+                    >
+                      👤 {getPlayerName(id)}
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-            <br />
-
-            <strong>
-              🏆 Winner: Team {match.winner}
-            </strong>
-
-            <br />
-
-            {match.createdAt && (
-              <small>
-                {match.createdAt
-                  .toDate()
-                  .toLocaleString()}
-              </small>
-            )}
-          </div>
-        ))
+              {match.createdAt && (
+                <div
+                  style={{
+                    marginTop: "20px",
+                    color: "#94a3b8",
+                    fontSize: "14px",
+                    textAlign: "right",
+                  }}
+                >
+                  {match.createdAt.toDate().toLocaleString()}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       )}
 
       <button
         className="back-button"
         onClick={() => setPage("dashboard")}
       >
-        ⬅ Back
+        ⬅ Back to Dashboard
       </button>
     </div>
   );

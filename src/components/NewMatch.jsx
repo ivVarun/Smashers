@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getPlayers } from "../services/playerService";
+import "./Players.css";
 
 function NewMatch({
   setPage,
@@ -50,13 +51,18 @@ function NewMatch({
 
   return (
     <div className="players-container">
-      <h2>🏸 New Match</h2>
+      <div className="page-header">
+        <h1>🏸 New Match</h1>
+        <p>Select four players to begin.</p>
+      </div>
 
-      <h3>Select 4 Players</h3>
+      <div className="section-title">
+        <h2>Players</h2>
 
-      <p>
-        Selected: {currentMatch.selectedPlayers.length} / 4
-      </p>
+        <span>
+          {currentMatch.selectedPlayers.length} / 4 Selected
+        </span>
+      </div>
 
       <div className="players-list">
         {players.map((player) => {
@@ -72,34 +78,50 @@ function NewMatch({
               style={{
                 cursor: "pointer",
                 border: selected
-                  ? "2px solid limegreen"
+                  ? "2px solid #22c55e"
                   : "2px solid transparent",
               }}
             >
-              {selected ? "✅ " : "⬜ "}
-              {player.name}
+              <div className="player-info">
+                <div className="player-avatar">
+                  {player.name.charAt(0).toUpperCase()}
+                </div>
+
+                <div>
+                  <h3>{player.name}</h3>
+                  <p>
+                    {selected
+                      ? "Selected"
+                      : "Tap to select"}
+                  </p>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  fontSize: "28px",
+                }}
+              >
+                {selected ? "✅" : "⬜"}
+              </div>
             </div>
           );
         })}
       </div>
 
-      <br />
-
       <button
+        className="add-button"
         disabled={currentMatch.selectedPlayers.length !== 4}
         onClick={() => setPage("teamSelection")}
       >
-        ➡️ Next
+        ➜ Continue
       </button>
-
-      <br />
-      <br />
 
       <button
         className="back-button"
         onClick={() => setPage("dashboard")}
       >
-        ⬅ Back
+        ⬅ Back to Dashboard
       </button>
     </div>
   );

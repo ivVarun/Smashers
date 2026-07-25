@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./Players.css";
 import { saveMatch } from "../services/matchService";
 import { updatePlayerStats } from "../services/playerStatsService";
 
@@ -28,18 +29,13 @@ function ScoreEntry({
         teamBScore: Number(teamBScore),
       };
 
-      // Save locally
       setCurrentMatch(updatedMatch);
 
-      // Save the match to Firestore
       await saveMatch(user.uid, updatedMatch);
-
-      // Update player statistics
       await updatePlayerStats(updatedMatch);
 
       alert("✅ Match saved successfully!");
 
-      // Reset current match
       setCurrentMatch({
         selectedPlayers: [],
         teamA: [],
@@ -48,7 +44,6 @@ function ScoreEntry({
         teamBScore: "",
       });
 
-      // Go back to dashboard
       setPage("dashboard");
     } catch (error) {
       console.error(error);
@@ -65,57 +60,80 @@ function ScoreEntry({
 
   return (
     <div className="players-container">
-      <h2>🏸 Match Score</h2>
+      <div className="page-header">
+        <h1>🏸 Score Entry</h1>
+        <p>Enter the final score for both teams.</p>
+      </div>
 
-      <h3>🏸 Team A</h3>
-
-      {currentMatch.teamA.map((player) => (
-        <div key={player.id} className="player-card">
-          👤 {player.name}
+      <div className="player-form-card">
+        <div className="section-title">
+          <h2>🏸 Team A</h2>
+          <span>{currentMatch.teamA.length} Players</span>
         </div>
-      ))}
 
-      <br />
+        {currentMatch.teamA.map((player) => (
+          <div
+            key={player.id}
+            style={{
+              color: "white",
+              padding: "6px 0",
+            }}
+          >
+            👤 {player.name}
+          </div>
+        ))}
 
-      <input
-        type="number"
-        className="player-input"
-        placeholder="Team A Score"
-        value={teamAScore}
-        onChange={(e) => setTeamAScore(e.target.value)}
-      />
+        <input
+          type="number"
+          className="player-input"
+          placeholder="Team A Score"
+          value={teamAScore}
+          onChange={(e) => setTeamAScore(e.target.value)}
+        />
 
-      <h2 style={{ textAlign: "center" }}>VS</h2>
+        <h1
+          style={{
+            textAlign: "center",
+            margin: "25px 0",
+            color: "#3b82f6",
+          }}
+        >
+          VS
+        </h1>
 
-      <input
-        type="number"
-        className="player-input"
-        placeholder="Team B Score"
-        value={teamBScore}
-        onChange={(e) => setTeamBScore(e.target.value)}
-      />
-
-      <br />
-
-      <h3>🏸 Team B</h3>
-
-      {currentMatch.teamB.map((player) => (
-        <div key={player.id} className="player-card">
-          👤 {player.name}
+        <div className="section-title">
+          <h2>🏸 Team B</h2>
+          <span>{currentMatch.teamB.length} Players</span>
         </div>
-      ))}
 
-      <br />
+        {currentMatch.teamB.map((player) => (
+          <div
+            key={player.id}
+            style={{
+              color: "white",
+              padding: "6px 0",
+            }}
+          >
+            👤 {player.name}
+          </div>
+        ))}
+
+        <input
+          type="number"
+          className="player-input"
+          placeholder="Team B Score"
+          value={teamBScore}
+          onChange={(e) => setTeamBScore(e.target.value)}
+        />
+      </div>
 
       <button
+        className="add-button"
         disabled={!validScores || saving}
         onClick={handleSaveMatch}
       >
-        {saving ? "Saving..." : "💾 Save Match"}
+        {saving ? "Saving Match..." : "💾 Save Match"}
       </button>
-
-      <br />
-      <br />
 
       <button
         className="back-button"

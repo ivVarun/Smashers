@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import "./Players.css";
 
 function TeamSelection({
   setPage,
@@ -34,11 +35,15 @@ function TeamSelection({
 
   return (
     <div className="players-container">
-      <h2>👥 Team Selection</h2>
+      <div className="page-header">
+        <h1>👥 Team Selection</h1>
+        <p>Select two players for Team A.</p>
+      </div>
 
-      <h3>Select 2 Players for Team A</h3>
-
-      <p>Selected: {teamA.length} / 2</p>
+      <div className="section-title">
+        <h2>Selected Players</h2>
+        <span>{teamA.length} / 2 Selected</span>
+      </div>
 
       <div className="players-list">
         {currentMatch.selectedPlayers.map((player) => {
@@ -54,48 +59,85 @@ function TeamSelection({
               style={{
                 cursor: "pointer",
                 border: selected
-                  ? "2px solid limegreen"
+                  ? "2px solid #22c55e"
                   : "2px solid transparent",
               }}
             >
-              {selected ? "✅ " : "⬜ "}
-              {player.name}
+              <div className="player-info">
+                <div className="player-avatar">
+                  {player.name.charAt(0).toUpperCase()}
+                </div>
+
+                <div>
+                  <h3>{player.name}</h3>
+                  <p>
+                    {selected
+                      ? "Team A"
+                      : "Tap to add"}
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ fontSize: "28px" }}>
+                {selected ? "✅" : "⬜"}
+              </div>
             </div>
           );
         })}
       </div>
 
-      <hr />
+      <div className="player-form-card" style={{ marginTop: "30px" }}>
+        <div className="section-title">
+          <h2>🏸 Team A</h2>
+          <span>{currentMatch.teamA.length} Players</span>
+        </div>
 
-      <h3>🏸 Team A</h3>
+        {currentMatch.teamA.length === 0 ? (
+          <p>No players selected.</p>
+        ) : (
+          currentMatch.teamA.map((player) => (
+            <div
+              key={player.id}
+              style={{ padding: "8px 0", color: "white" }}
+            >
+              👤 {player.name}
+            </div>
+          ))
+        )}
 
-      {currentMatch.teamA.length === 0 ? (
-        <p>No players selected.</p>
-      ) : (
-        currentMatch.teamA.map((player) => (
-          <div key={player.id}>👤 {player.name}</div>
-        ))
-      )}
+        <hr
+          style={{
+            margin: "20px 0",
+            borderColor: "#334155",
+          }}
+        />
 
-      <hr />
+        <div className="section-title">
+          <h2>🏸 Team B</h2>
+          <span>{currentMatch.teamB.length} Players</span>
+        </div>
 
-      <h3>🏸 Team B</h3>
-
-      {currentMatch.teamB.map((player) => (
-        <div key={player.id}>👤 {player.name}</div>
-      ))}
-
-      <br />
+        {currentMatch.teamB.length === 0 ? (
+          <p>No players assigned yet.</p>
+        ) : (
+          currentMatch.teamB.map((player) => (
+            <div
+              key={player.id}
+              style={{ padding: "8px 0", color: "white" }}
+            >
+              👤 {player.name}
+            </div>
+          ))
+        )}
+      </div>
 
       <button
+        className="add-button"
         disabled={teamA.length !== 2}
         onClick={() => setPage("scoreEntry")}
       >
-        ➡️ Next
+        ➜ Continue to Score Entry
       </button>
-
-      <br />
-      <br />
 
       <button
         className="back-button"

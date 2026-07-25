@@ -59,55 +59,80 @@ function Players({ setPage, user }) {
 
   return (
     <div className="players-container">
-      <h2>👤 Players</h2>
+      <div className="page-header">
+        <h1>👥 Players</h1>
+        <p>Manage your badminton players.</p>
+      </div>
 
-      <input
-        className="player-input"
-        type="text"
-        placeholder="Enter player name"
-        value={playerName}
-        onChange={(e) => setPlayerName(e.target.value)}
-      />
+      <div className="player-form-card">
+        <input
+          className="player-input"
+          type="text"
+          placeholder="Enter player name"
+          value={playerName}
+          onChange={(e) => setPlayerName(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") savePlayer();
+          }}
+        />
 
-      <button
-        className="add-button"
-        onClick={savePlayer}
-      >
-        {editingPlayerId ? "💾 Update Player" : "➕ Add Player"}
-      </button>
+        <button className="add-button" onClick={savePlayer}>
+          {editingPlayerId ? "💾 Update Player" : "➕ Add Player"}
+        </button>
+      </div>
 
-      {players.length === 0 ? (
-        <p>No players added yet.</p>
-      ) : (
-        <div className="players-list">
-          <h3>Players</h3>
-
-          {players.map((player) => (
-            <div
-              key={player.id}
-              className="player-card"
-            >
-              <span>{player.name}</span>
-
-              <div className="player-actions">
-                <button onClick={() => startEditing(player)}>
-                  ✏️
-                </button>
-
-                <button onClick={() => removePlayer(player.id)}>
-                  🗑️
-                </button>
-              </div>
-            </div>
-          ))}
+      <div className="players-section">
+        <div className="section-title">
+          <h2>Player List</h2>
+          <span>{players.length} Player{players.length !== 1 ? "s" : ""}</span>
         </div>
-      )}
+
+        {players.length === 0 ? (
+          <div className="empty-card">
+            <p>No players added yet.</p>
+            <small>Add your first player to get started.</small>
+          </div>
+        ) : (
+          <div className="players-list">
+            {players.map((player) => (
+              <div key={player.id} className="player-card">
+                <div className="player-info">
+                  <div className="player-avatar">
+                    {player.name.charAt(0).toUpperCase()}
+                  </div>
+
+                  <div>
+                    <h3>{player.name}</h3>
+                    <p>Ready to play</p>
+                  </div>
+                </div>
+
+                <div className="player-actions">
+                  <button
+                    className="edit-button"
+                    onClick={() => startEditing(player)}
+                  >
+                    ✏️
+                  </button>
+
+                  <button
+                    className="delete-button"
+                    onClick={() => removePlayer(player.id)}
+                  >
+                    🗑️
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       <button
         className="back-button"
         onClick={() => setPage("dashboard")}
       >
-        ⬅ Back
+        ⬅ Back to Dashboard
       </button>
     </div>
   );
