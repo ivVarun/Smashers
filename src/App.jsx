@@ -13,6 +13,7 @@ import NewMatch from "./components/NewMatch";
 import TeamSelection from "./components/TeamSelection";
 import ScoreEntry from "./components/ScoreEntry";
 import MatchHistory from "./components/MatchHistory";
+import Rankings from "./components/Rankings";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -78,12 +79,7 @@ function App() {
   }
 
   if (page === "players") {
-    return (
-      <Players
-        setPage={setPage}
-        user={user}
-      />
-    );
+    return <Players setPage={setPage} user={user} />;
   }
 
   if (page === "newMatch") {
@@ -127,11 +123,18 @@ function App() {
     );
   }
 
+  if (page === "rankings") {
+    return (
+      <Rankings
+        setPage={setPage}
+        user={user}
+      />
+    );
+  }
+
   return (
     <div className="app">
-      <h1 className="app-title">
-        🏸 Smashers
-      </h1>
+      <h1 className="app-title">🏸 Smashers</h1>
 
       <p className="welcome-text">
         Welcome back, {user.displayName} 👋
@@ -172,7 +175,7 @@ function App() {
 
         <button
           className="dashboard-button"
-          disabled
+          onClick={() => setPage("rankings")}
         >
           🏆 Rankings
         </button>

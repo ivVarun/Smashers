@@ -6,6 +6,8 @@ import {
 
 import { db } from "../firebase";
 
+const ELO_CHANGE = 16;
+
 export async function updatePlayerStats(currentMatch) {
   const winningTeam =
     currentMatch.teamAScore > currentMatch.teamBScore
@@ -22,6 +24,7 @@ export async function updatePlayerStats(currentMatch) {
     await updateDoc(doc(db, "players", player.id), {
       wins: increment(1),
       matches: increment(1),
+      elo: increment(ELO_CHANGE),
     });
   }
 
@@ -30,6 +33,7 @@ export async function updatePlayerStats(currentMatch) {
     await updateDoc(doc(db, "players", player.id), {
       losses: increment(1),
       matches: increment(1),
+      elo: increment(-ELO_CHANGE),
     });
   }
 }
