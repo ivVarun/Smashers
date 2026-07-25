@@ -16,9 +16,16 @@ export const saveMatch = async (userId, currentMatch) => {
   const match = {
     userId,
 
-    teamA: currentMatch.teamA.map((player) => player.id),
+    // Store both ID and Name
+    teamA: currentMatch.teamA.map((player) => ({
+      id: player.id,
+      name: player.name,
+    })),
 
-    teamB: currentMatch.teamB.map((player) => player.id),
+    teamB: currentMatch.teamB.map((player) => ({
+      id: player.id,
+      name: player.name,
+    })),
 
     teamAScore: Number(currentMatch.teamAScore),
 

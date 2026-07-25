@@ -14,11 +14,14 @@ import TeamSelection from "./components/TeamSelection";
 import ScoreEntry from "./components/ScoreEntry";
 import MatchHistory from "./components/MatchHistory";
 import Rankings from "./components/Rankings";
+import PlayerProfile from "./components/PlayerProfile";
 
 function App() {
   const [user, setUser] = useState(null);
   const [page, setPage] = useState("dashboard");
   const [loading, setLoading] = useState(true);
+
+  const [selectedPlayer, setSelectedPlayer] = useState(null);
 
   const [currentMatch, setCurrentMatch] = useState({
     selectedPlayers: [],
@@ -49,6 +52,7 @@ function App() {
     await signOut(auth);
 
     setPage("dashboard");
+    setSelectedPlayer(null);
 
     setCurrentMatch({
       selectedPlayers: [],
@@ -128,6 +132,17 @@ function App() {
       <Rankings
         setPage={setPage}
         user={user}
+        setSelectedPlayer={setSelectedPlayer}
+      />
+    );
+  }
+
+  if (page === "playerProfile") {
+    return (
+      <PlayerProfile
+        setPage={setPage}
+        selectedPlayer={selectedPlayer}
+        user={user}
       />
     );
   }
@@ -141,7 +156,6 @@ function App() {
       </p>
 
       <div className="dashboard-buttons">
-
         <button
           className="dashboard-button"
           onClick={() => setPage("players")}
@@ -186,7 +200,6 @@ function App() {
         >
           📊 Statistics
         </button>
-
       </div>
 
       <br />
